@@ -201,3 +201,19 @@ test('readFloat64Array', () => {
     const br = new DataViewReader_1.DataViewReader(buf, 0);
     expect(br.readFloat64Array()).toEqual(value);
 });
+test('readString', () => {
+    const value = 'hello world';
+    // @ts-ignore
+    const uint8array = new TextEncoder("utf-8").encode(value);
+    const buf = new ArrayBuffer(4 + uint8array.length);
+    const view = new DataView(buf);
+    let offset = 0;
+    view.setUint32(offset, uint8array.length);
+    offset += 4;
+    uint8array.forEach(b => {
+        view.setUint8(offset, b);
+        offset += 1;
+    });
+    const br = new DataViewReader_1.DataViewReader(buf, 0);
+    expect(br.readString()).toBe(value);
+});

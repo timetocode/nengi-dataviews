@@ -1,6 +1,6 @@
 {
   "name": "nengi-dataviews",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "DataView reader and writer for nengi",
   "main": "./build/index.js",
   "scripts": {
