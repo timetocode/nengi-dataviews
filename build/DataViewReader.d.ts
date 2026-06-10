@@ -1,8 +1,9 @@
 import { IBinaryReader } from 'nengi';
+import type { BinaryPayload } from 'nengi';
 declare class DataViewReader implements IBinaryReader {
     view: DataView;
     offset: number;
-    constructor(arrayBuffer: ArrayBuffer, offset: number);
+    constructor(payload: BinaryPayload, offset?: number);
     get byteLength(): number;
     readUInt8(): number;
     readInt8(): number;

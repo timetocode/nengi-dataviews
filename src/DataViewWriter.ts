@@ -1,6 +1,6 @@
 import { IBinaryWriter } from 'nengi'
 
-class DataViewWriter implements IBinaryWriter {
+class DataViewWriter implements IBinaryWriter<ArrayBuffer> {
     view: DataView
     offset: number
 
@@ -10,10 +10,14 @@ class DataViewWriter implements IBinaryWriter {
     }
 
     get buffer() {
-        return this.view.buffer
+        return this.view.buffer as ArrayBuffer
     }
 
-    static create(byteLength: number) {
+    get payload() {
+        return this.buffer
+    }
+
+    static create(byteLength: number): DataViewWriter {
         return new DataViewWriter(new ArrayBuffer(byteLength))
     }
 
@@ -60,17 +64,18 @@ class DataViewWriter implements IBinaryWriter {
     writeString(value: string) {
         const uint8arr = new TextEncoder().encode(value)
         this.writeUInt32(uint8arr.byteLength)
-        uint8arr.forEach(byte => {
-            this.writeUInt8(byte)
-        })
+        this.writeBytes(uint8arr)
+    }
+
+    writeBytes(value: Uint8Array) {
+        new Uint8Array(this.view.buffer, this.view.byteOffset + this.offset, value.byteLength).set(value)
+        this.offset += value.byteLength
     }
 
     writeUInt8Array(value: Uint8Array) {
         const length = value.byteLength
         this.writeUInt32(length)
-        for (let i = 0; i < value.length; i++) {
-            this.writeUInt8(value[i])
-        }
+        this.writeBytes(value)
     }
 
     writeInt8Array(value: Int8Array) {

@@ -2,12 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataViewReader = void 0;
 class DataViewReader {
-    constructor(arrayBuffer, offset) {
-        this.view = new DataView(arrayBuffer);
+    constructor(payload, offset = 0) {
+        if (payload instanceof ArrayBuffer) {
+            this.view = new DataView(payload);
+        }
+        else {
+            this.view = new DataView(payload.buffer, payload.byteOffset, payload.byteLength);
+        }
         this.offset = offset;
     }
     get byteLength() {
-        return this.view.buffer.byteLength;
+        return this.view.byteLength;
     }
     readUInt8() {
         const value = this.view.getUint8(this.offset);
@@ -51,8 +56,7 @@ class DataViewReader {
     }
     readString() {
         const length = this.readUInt32();
-        const value = new TextDecoder().decode(this.view.buffer.slice(this.offset, this.offset + length));
-        //const value = this.buffer.toString('utf8', this.offset, this.offset + length)
+        const value = new TextDecoder().decode(new Uint8Array(this.view.buffer, this.view.byteOffset + this.offset, length));
         this.offset += length;
         return value;
     }

@@ -9,6 +9,9 @@ class DataViewWriter {
     get buffer() {
         return this.view.buffer;
     }
+    get payload() {
+        return this.buffer;
+    }
     static create(byteLength) {
         return new DataViewWriter(new ArrayBuffer(byteLength));
     }
@@ -47,16 +50,16 @@ class DataViewWriter {
     writeString(value) {
         const uint8arr = new TextEncoder().encode(value);
         this.writeUInt32(uint8arr.byteLength);
-        uint8arr.forEach(byte => {
-            this.writeUInt8(byte);
-        });
+        this.writeBytes(uint8arr);
+    }
+    writeBytes(value) {
+        new Uint8Array(this.view.buffer, this.view.byteOffset + this.offset, value.byteLength).set(value);
+        this.offset += value.byteLength;
     }
     writeUInt8Array(value) {
         const length = value.byteLength;
         this.writeUInt32(length);
-        for (let i = 0; i < value.length; i++) {
-            this.writeUInt8(value[i]);
-        }
+        this.writeBytes(value);
     }
     writeInt8Array(value) {
         const length = value.length;

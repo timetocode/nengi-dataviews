@@ -1,9 +1,10 @@
 import { IBinaryWriter } from 'nengi';
-declare class DataViewWriter implements IBinaryWriter {
+declare class DataViewWriter implements IBinaryWriter<ArrayBuffer> {
     view: DataView;
     offset: number;
     constructor(arrayBuffer: ArrayBuffer, offset?: number);
     get buffer(): ArrayBuffer;
+    get payload(): ArrayBuffer;
     static create(byteLength: number): DataViewWriter;
     writeUInt8(value: number): void;
     writeInt8(value: number): void;
@@ -14,6 +15,7 @@ declare class DataViewWriter implements IBinaryWriter {
     writeFloat32(value: number): void;
     writeFloat64(value: number): void;
     writeString(value: string): void;
+    writeBytes(value: Uint8Array): void;
     writeUInt8Array(value: Uint8Array): void;
     writeInt8Array(value: Int8Array): void;
     writeUInt16Array(value: Uint16Array): void;

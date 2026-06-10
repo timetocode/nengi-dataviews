@@ -1,16 +1,21 @@
 import { IBinaryReader } from 'nengi'
+import type { BinaryPayload } from 'nengi'
 
 class DataViewReader implements IBinaryReader {
     view: DataView
     offset: number
 
-    constructor(arrayBuffer: ArrayBuffer, offset: number) {
-        this.view = new DataView(arrayBuffer)
+    constructor(payload: BinaryPayload, offset = 0) {
+        if (payload instanceof ArrayBuffer) {
+            this.view = new DataView(payload)
+        } else {
+            this.view = new DataView(payload.buffer, payload.byteOffset, payload.byteLength)
+        }
         this.offset = offset
     }
 
     get byteLength(): number {
-        return this.view.buffer.byteLength
+        return this.view.byteLength
     }
 
     readUInt8(): number {
@@ -63,8 +68,7 @@ class DataViewReader implements IBinaryReader {
 
     readString(): string {
         const length = this.readUInt32()
-        const value = new TextDecoder().decode(this.view.buffer.slice(this.offset, this.offset+length))
-        //const value = this.buffer.toString('utf8', this.offset, this.offset + length)
+        const value = new TextDecoder().decode(new Uint8Array(this.view.buffer, this.view.byteOffset + this.offset, length))
         this.offset += length
         return value
     }
