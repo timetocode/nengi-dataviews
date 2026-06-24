@@ -1,4 +1,4 @@
-import { IBinaryWriter } from 'nengi';
+import type { IBinaryWriter } from 'nengi';
 declare class DataViewWriter implements IBinaryWriter<ArrayBuffer> {
     view: DataView;
     offset: number;

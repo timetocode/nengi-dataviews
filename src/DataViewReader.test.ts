@@ -253,3 +253,21 @@ test('readString', () => {
     const br = new DataViewReader(buf, 0)
     expect(br.readString()).toBe(value)  
 })
+
+test('readString rejects lengths beyond the payload', () => {
+    const buf = new ArrayBuffer(4)
+    const view = new DataView(buf)
+    view.setUint32(0, 1)
+    const br = new DataViewReader(buf, 0)
+
+    expect(() => br.readString()).toThrow('Cannot read 1 bytes')
+})
+
+test('readUInt8Array rejects lengths beyond the payload before allocating', () => {
+    const buf = new ArrayBuffer(4)
+    const view = new DataView(buf)
+    view.setUint32(0, 0xffffffff)
+    const br = new DataViewReader(buf, 0)
+
+    expect(() => br.readUInt8Array()).toThrow('Cannot read')
+})
